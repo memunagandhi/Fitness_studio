@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media Archive | SilverMoon Fitness Studio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { primary: '#D9FD50', dark: '#0A0A0A', 'dark-lighter': '#121212' },
+                    fontFamily: { heading: ['Orbitron', 'sans-serif'], body: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        body { background-color: #0A0A0A; color: #FFFFFF; font-family: 'Inter', sans-serif; }
+        h1 { font-family: 'Orbitron', sans-serif; font-weight: 900; text-transform: uppercase; letter-spacing: -0.05em; line-height: 0.9; }
+        h2 { font-family: 'Orbitron', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em; }
+        .text-gradient {
+            background: linear-gradient(to right, #D9FD50, #98f000);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 transition-all duration-300 py-6" id="navbar">
+        <div class="container mx-auto px-6 flex justify-between items-center">
+            <a href="index.html" class="text-2xl font-heading font-black tracking-tighter flex items-center gap-2">
+                <span class="text-primary italic">SILVERMOON</span>
+                <span class="font-light tracking-widest text-[10px] border-l border-white/20 pl-2 text-primary uppercase">Studio</span>
+            </a>
+            
+            <div class="hidden md:flex items-center gap-8 text-[10px] font-bold uppercase tracking-[0.2em]">
+                <a href="index.html" class="hover:text-primary transition-colors">Home</a>
+                <a href="about.html" class="hover:text-primary transition-colors">About</a>
+                <a href="classes.html" class="hover:text-primary transition-colors">Classes</a>
+                <a href="membership.html" class="hover:text-primary transition-colors">Pricing</a>
+                <a href="contact.html" class="px-6 py-2 bg-primary text-dark font-black hover:scale-105 transition-transform shadow-[0_0_20px_rgba(217,253,80,0.2)]">Join Now</a>
+            </div>
+            
+            <button class="md:hidden text-primary" id="menu-btn">
+                <i data-lucide="menu"></i>
+            </button>
+        </div>
+    </nav>
+
+    <section class="pt-40 pb-20 container mx-auto px-6">
+        <h1 class="text-6xl md:text-8xl mb-12 uppercase leading-[0.9]">
+            Visual <br>
+            <span class="text-gradient">Archive</span>
+        </h1>
+        <p class="text-gray-400 max-w-2xl text-lg font-light leading-relaxed mb-12 border-l-2 border-primary/20 pl-8">
+            Inside the sanctuary. Witness the intensity, the luxury, and the culture of SilverMoon Fitness.
+        </p>
+    </section>
+
+    <section class="pb-32 container mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Gallery Items -->
+        <div class="h-80 glass rounded-2xl overflow-hidden group">
+            <img src="https://images.unsplash.com/photo-1540497077202-7c8a3999166f?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700 opacity-60 group-hover:opacity-100">
+        </div>
+        <div class="h-80 glass rounded-2xl overflow-hidden group">
+            <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700 opacity-60 group-hover:opacity-100">
+        </div>
+        <div class="h-80 glass rounded-2xl overflow-hidden group">
+            <img src="https://images.unsplash.com/photo-1571902943202-507ec2618e8f?q=80&w=1975&auto=format&fit=crop" class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700 opacity-60 group-hover:opacity-100">
+        </div>
+        <div class="h-80 glass rounded-2xl overflow-hidden group">
+            <img src="https://images.unsplash.com/photo-1593079831268-3381b0db4a77?q=80&w=2069&auto=format&fit=crop" class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700 opacity-60 group-hover:opacity-100">
+        </div>
+        <div class="h-80 glass rounded-2xl overflow-hidden group">
+            <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700 opacity-60 group-hover:opacity-100">
+        </div>
+        <div class="h-80 glass rounded-2xl overflow-hidden group">
+            <img src="https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?q=80&w=1974&auto=format&fit=crop" class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700 opacity-60 group-hover:opacity-100">
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark-lighter pt-32 pb-10 border-t border-white/5">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-16 mb-20">
+                <div class="col-span-1 md:col-span-1">
+                    <a href="index.html" class="text-3xl font-heading font-black tracking-tighter flex items-center gap-2 mb-8">
+                        <span class="text-primary italic">SILVERMOON</span>
+                        <span class="font-light tracking-widest text-[10px] border-l border-white/20 pl-2 text-primary uppercase">Studio</span>
+                    </a>
+                    <p class="text-gray-500 max-w-sm mb-8 leading-relaxed text-[11px] font-medium uppercase tracking-wider">
+                        Redefining the standards of fitness in Surat. Owned by Maymuna Gandhi. Our mission is to forge a community of elite performers through science and luxury.
+                    </p>
+                    <div class="flex gap-5">
+                        <a href="#" class="w-11 h-11 glass flex items-center justify-center hover:bg-primary hover:text-dark transition-all rounded-full border border-white/10 hover:border-primary shadow-[0_0_15px_rgba(217,253,80,0.05)] hover:shadow-[0_0_25px_rgba(217,253,80,0.3)] group">
+                            <i data-lucide="instagram" class="w-4 h-4 group-hover:scale-110 transition-transform"></i>
+                        </a>
+                        <a href="#" class="w-11 h-11 glass flex items-center justify-center hover:bg-primary hover:text-dark transition-all rounded-full border border-white/10 hover:border-primary shadow-[0_0_15px_rgba(217,253,80,0.05)] hover:shadow-[0_0_25px_rgba(217,253,80,0.3)] group">
+                            <i data-lucide="youtube" class="w-4 h-4 group-hover:scale-110 transition-transform"></i>
+                        </a>
+                        <a href="#" class="w-11 h-11 glass flex items-center justify-center hover:bg-primary hover:text-dark transition-all rounded-full border border-white/10 hover:border-primary shadow-[0_0_15px_rgba(217,253,80,0.05)] hover:shadow-[0_0_25px_rgba(217,253,80,0.3)] group">
+                            <i data-lucide="twitter" class="w-4 h-4 group-hover:scale-110 transition-transform"></i>
+                        </a>
+                        <a href="#" class="w-11 h-11 glass flex items-center justify-center hover:bg-primary hover:text-dark transition-all rounded-full border border-white/10 hover:border-primary shadow-[0_0_15px_rgba(217,253,80,0.05)] hover:shadow-[0_0_25px_rgba(217,253,80,0.3)] group">
+                            <i data-lucide="message-circle" class="w-4 h-4 group-hover:scale-110 transition-transform"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h5 class="text-[10px] font-black mb-8 uppercase tracking-[0.4em] text-primary">User Navigation</h5>
+                    <ul class="space-y-4 text-gray-500 font-bold text-[10px] uppercase tracking-widest">
+                        <li><a href="about.html" class="hover:text-white transition-colors">The Brand</a></li>
+                        <li><a href="classes.html" class="hover:text-white transition-colors">Programs</a></li>
+                        <li><a href="trainers.html" class="hover:text-white transition-colors">Our Elite Team</a></li>
+                        <li><a href="membership.html" class="hover:text-white transition-colors">Memberships</a></li>
+                        <li><a href="schedule.html" class="hover:text-white transition-colors">Timetable</a></li>
+                        <li><a href="sitemap.html" class="hover:text-white transition-colors">Sitemap</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h5 class="text-[10px] font-black mb-8 uppercase tracking-[0.4em] text-primary">Staff & CRM</h5>
+                    <ul class="space-y-4 text-gray-500 font-bold text-[10px] uppercase tracking-widest">
+                        <li><a href="crm-login.html" class="hover:text-white transition-colors">Staff Portal</a></li>
+                        <li><a href="crm-dashboard.html" class="hover:text-white transition-colors">CRM Login</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors opacity-30 cursor-not-allowed">Admin Panel</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h5 class="text-[10px] font-black mb-8 uppercase tracking-[0.4em] text-primary">Connect</h5>
+                    <ul class="space-y-4 text-gray-500 font-bold text-[10px] uppercase tracking-widest">
+                        <li class="flex items-center gap-3"><i data-lucide="map-pin" class="w-4 h-4 text-primary"></i> Shahpore, Surat, Gujarat</li>
+                        <li class="flex items-center gap-3"><i data-lucide="phone" class="w-4 h-4 text-primary"></i> +91 (SURAT) SILVER</li>
+                        <li class="flex items-center gap-3"><i data-lucide="mail" class="w-4 h-4 text-primary"></i> hello@silvermoon.fit</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 text-[9px] uppercase tracking-[0.4em] text-gray-600">
+                <p>&copy; 2026 SilverMoon Fitness Studio. Owned by Maymuna Gandhi.</p>
+                <div class="flex gap-10">
+                    <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
+                    <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                nav.classList.add('glass', 'py-4', 'border-b', 'border-white/5');
+                nav.classList.remove('py-6');
+            } else {
+                nav.classList.remove('glass', 'py-4', 'border-b', 'border-white/5');
+                nav.classList.add('py-6');
+            }
+        });
+    </script>
+</body>
+</html>

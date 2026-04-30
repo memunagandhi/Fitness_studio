@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Membership | SilverMoon Fitness Studio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { primary: '#D9FD50', dark: '#0A0A0A' },
+                    fontFamily: { heading: ['Orbitron', 'sans-serif'], body: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        body { background-color: #0A0A0A; color: #FFFFFF; font-family: 'Inter', sans-serif; }
+        h1 { font-family: 'Orbitron', sans-serif; font-weight: 900; text-transform: uppercase; letter-spacing: -0.05em; line-height: 0.9; }
+        h2 { font-family: 'Orbitron', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em; }
+        h3 { font-family: 'Orbitron', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+        .text-gradient {
+            background: linear-gradient(to right, #D9FD50, #98f000);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .checkout-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 100; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
+        .checkout-modal.active { display: flex; }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+
+    <!-- Payment Overlay (Simulated Gateway) -->
+    <div id="paymentOverlay" class="checkout-modal">
+        <div class="glass p-12 w-full max-w-lg text-center relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1 bg-primary animate-pulse"></div>
+            <button onclick="closeCheckout()" class="absolute top-6 right-6 text-gray-500 hover:text-white transition-colors"><i data-lucide="x"></i></button>
+            
+            <div id="checkoutForm">
+                <i data-lucide="shield-check" class="w-16 h-16 text-primary mx-auto mb-6"></i>
+                <h3 class="text-2xl font-black uppercase tracking-tighter mb-2">Secure Checkout</h3>
+                <p class="text-[10px] uppercase tracking-widest text-gray-500 mb-10">SilverMoon Studio x Secure Gateway</p>
+                
+                <div class="space-y-6 text-left mb-10">
+                    <div class="p-6 bg-white/5 border border-white/5 rounded-sm">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-[10px] font-black uppercase text-gray-400">Selected Plan</span>
+                            <span id="selectedPlanName" class="text-primary font-black uppercase text-sm">Core</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-[10px] font-black uppercase text-gray-400">Total Due Today</span>
+                            <span id="selectedPlanPrice" class="text-white font-black text-xl">₹3,999</span>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-[9px] uppercase tracking-widest text-gray-500 mb-2 font-black">Full Name</label>
+                        <input type="text" placeholder="Maymuna Gandhi" class="w-full bg-white/5 border border-white/10 p-4 text-sm outline-none focus:border-primary/50 transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-[9px] uppercase tracking-widest text-gray-500 mb-2 font-black">Email Address</label>
+                        <input type="email" placeholder="hello@silvermoon.fit" class="w-full bg-white/5 border border-white/10 p-4 text-sm outline-none focus:border-primary/50 transition-all">
+                    </div>
+                </div>
+
+                <button onclick="processPayment()" class="w-full py-5 bg-primary text-dark font-black uppercase tracking-widest text-xs hover:shadow-[0_0_40px_rgba(217,253,80,0.3)] transition-all">
+                    Redirect to Payment Gateway
+                </button>
+                <div class="mt-6 flex items-center justify-center gap-4 opacity-30 grayscale">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Stripe_Logo%2C_revised_2016.svg/512px-Stripe_Logo%2C_revised_2016.svg.png" class="h-4" alt="Stripe">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Visa_logo.svg/512px-Visa_logo.svg.png" class="h-3" alt="Visa">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/PayPal.svg/512px-PayPal.svg.png" class="h-4" alt="PayPal">
+                </div>
+            </div>
+
+            <!-- Processing State -->
+            <div id="processingState" class="hidden py-20 text-center">
+                <div class="w-20 h-20 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-10"></div>
+                <h3 class="text-xl font-black uppercase tracking-widest animate-pulse">Connecting to Secure Server...</h3>
+                <p class="text-gray-500 text-xs mt-4">Please do not refresh the page.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="fixed top-0 w-full z-50 transition-all duration-300 py-6" id="navbar">
+        <div class="container mx-auto px-6 flex justify-between items-center">
+            <a href="index.html" class="text-2xl font-heading font-black tracking-tighter flex items-center gap-2">
+                <span class="text-primary italic">SILVERMOON</span>
+                <span class="font-light tracking-widest text-[10px] border-l border-white/20 pl-2 text-primary uppercase">Studio</span>
+            </a>
+            
+            <div class="hidden md:flex items-center gap-8 text-[10px] font-bold uppercase tracking-[0.2em]">
+                <a href="index.html" class="hover:text-primary transition-colors">Home</a>
+                <a href="about.html" class="hover:text-primary transition-colors">About</a>
+                <a href="classes.html" class="hover:text-primary transition-colors">Classes</a>
+                <a href="membership.html" class="hover:text-primary transition-colors">Pricing</a>
+                <a href="contact.html" class="px-6 py-2 bg-primary text-dark font-black hover:scale-105 transition-transform shadow-[0_0_20px_rgba(217,253,80,0.2)]">Join Now</a>
+            </div>
+            
+            <button class="md:hidden text-primary" id="menu-btn">
+                <i data-lucide="menu"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Header Section -->
+    <section class="pt-48 pb-20 container mx-auto px-6 text-center relative overflow-hidden">
+        <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-96 bg-primary/10 blur-[120px] rounded-full -z-10"></div>
+        <h2 class="text-primary font-black tracking-[0.4em] mb-4 text-[10px] uppercase animate-pulse">Inaugural Offer</h2>
+        <h1 class="text-6xl md:text-8xl mb-8 uppercase leading-[0.9]">
+            Elite <br>
+            <span class="text-gradient">Memberships</span>
+        </h1>
+        <p class="text-gray-400 max-w-xl mx-auto text-sm font-medium leading-relaxed">
+            Investment in yourself is the only guaranteed return. Join Surat's premier fitness sanctuary founded by Maymuna Gandhi.
+        </p>
+    </section>
+
+    <!-- Special Offers Banner -->
+    <section class="mb-20 container mx-auto px-6">
+        <div class="bg-primary p-6 rounded-sm flex flex-col md:flex-row items-center justify-between gap-6 overflow-hidden relative">
+            <div class="absolute top-0 right-0 p-2 opacity-10 rotate-12"><i data-lucide="zap" class="w-24 h-24 text-dark"></i></div>
+            <div class="text-dark">
+                <p class="text-[9px] font-black uppercase tracking-[0.3em] mb-1 opacity-60">Limited Time Offer</p>
+                <h4 class="text-2xl font-black uppercase tracking-tighter leading-tight">50% OFF FOR THE FIRST 10 MEMBERS IN SHAHPORE</h4>
+            </div>
+            <div class="flex items-center gap-6">
+                <div class="text-dark font-black text-center">
+                    <span class="block text-4xl leading-none">04</span>
+                    <span class="text-[8px] uppercase tracking-widest">Spots Left</span>
+                </div>
+                <button onclick="scrollToPlans()" class="px-8 py-3 bg-dark text-white font-black uppercase tracking-widest text-[10px] hover:scale-105 transition-transform">Claim Offer</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Plans Section -->
+    <section id="plans" class="pb-40 container mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-10">
+        <!-- Core -->
+        <div class="glass p-12 flex flex-col group hover:border-primary/20 transition-all duration-700">
+            <h3 class="text-[10px] font-black uppercase tracking-[0.4em] text-gray-500 mb-8">Silver Core</h3>
+            <div class="text-5xl font-black mb-10 text-white tracking-tighter italic">₹3,999<span class="text-sm text-gray-700 font-normal not-italic">/mo</span></div>
+            <ul class="space-y-6 mb-12 flex-grow text-xs text-gray-500">
+                <li class="flex items-center gap-3"><i data-lucide="check" class="text-primary w-4 h-4"></i> 24/7 Studio Access</li>
+                <li class="flex items-center gap-3"><i data-lucide="check" class="text-primary w-4 h-4"></i> Aesthetic Workout Space</li>
+                <li class="flex items-center gap-3"><i data-lucide="check" class="text-primary w-4 h-4"></i> Basic Performance App</li>
+                <li class="flex items-center gap-3 opacity-30"><i data-lucide="minus" class="w-4 h-4"></i> Private Training</li>
+            </ul>
+            <button onclick="openCheckout('Silver Core', '₹3,999')" class="w-full py-5 glass text-center font-black uppercase tracking-widest text-[10px] hover:bg-white/10 transition-all border border-white/5">Select Plan</button>
+        </div>
+
+        <!-- Pro -->
+        <div class="glass p-12 flex flex-col border-primary/40 relative bg-white/[0.02] shadow-[0_0_50px_rgba(217,253,80,0.05)] scale-105 z-10">
+            <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-dark px-6 py-1.5 text-[9px] font-black uppercase tracking-[0.3em] shadow-xl">Surat's Choice</div>
+            <h3 class="text-[10px] font-black uppercase tracking-[0.4em] text-primary mb-8">Silver Pro</h3>
+            <div class="text-5xl font-black mb-10 text-white tracking-tighter italic">₹6,999<span class="text-sm text-gray-700 font-normal not-italic">/mo</span></div>
+            <ul class="space-y-6 mb-12 flex-grow text-xs text-white">
+                <li class="flex items-center gap-3"><i data-lucide="star" class="text-primary w-4 h-4 fill-primary"></i> All Core Features</li>
+                <li class="flex items-center gap-3"><i data-lucide="star" class="text-primary w-4 h-4 fill-primary"></i> Unlimited HIIT & Yoga</li>
+                <li class="flex items-center gap-3"><i data-lucide="star" class="text-primary w-4 h-4 fill-primary"></i> Monthly Diet Consultation</li>
+                <li class="flex items-center gap-3"><i data-lucide="star" class="text-primary w-4 h-4 fill-primary"></i> Performance Gear Kit</li>
+            </ul>
+            <button onclick="openCheckout('Silver Pro', '₹6,999')" class="w-full py-5 bg-primary text-dark text-center font-black uppercase tracking-widest text-[10px] hover:scale-105 hover:shadow-[0_0_25px_rgba(217,253,80,0.4)] transition-all">Start Enlisting</button>
+        </div>
+
+        <!-- Elite -->
+        <div class="glass p-12 flex flex-col group hover:border-primary/20 transition-all duration-700">
+            <h3 class="text-[10px] font-black uppercase tracking-[0.4em] text-gray-500 mb-8">Silver Elite</h3>
+            <div class="text-5xl font-black mb-10 text-white tracking-tighter italic">₹12,999<span class="text-sm text-gray-700 font-normal not-italic">/mo</span></div>
+            <ul class="space-y-6 mb-12 flex-grow text-xs text-gray-500">
+                <li class="flex items-center gap-3"><i data-lucide="shield-check" class="text-primary w-4 h-4"></i> Private PT (4 Sessions)</li>
+                <li class="flex items-center gap-3"><i data-lucide="shield-check" class="text-primary w-4 h-4"></i> Luxury Locker & Laundry</li>
+                <li class="flex items-center gap-3"><i data-lucide="shield-check" class="text-primary w-4 h-4"></i> VIP Lounge Access</li>
+                <li class="flex items-center gap-3"><i data-lucide="shield-check" class="text-primary w-4 h-4"></i> Full Body Bio-Scans</li>
+            </ul>
+            <button onclick="openCheckout('Silver Elite', '₹12,999')" class="w-full py-5 glass text-center font-black uppercase tracking-widest text-[10px] hover:bg-white/10 transition-all border border-white/5">Select Plan</button>
+        </div>
+    </section>
+
+    <!-- FAQ / Reassurance Section -->
+    <section class="bg-white/[0.01] py-32 border-t border-white/5">
+        <div class="container mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-20">
+            <div>
+                <h3 class="text-3xl font-black uppercase mb-8 tracking-tighter">Why Choose <br><span class="text-primary italic">SilverMoon?</span></h3>
+                <p class="text-gray-500 text-sm leading-relaxed mb-10">We provide an aesthetic sanctuary where science meets performance. Located in Shahpore, Surat, we are the only studio offering elite bio-metric tracking with premium facilities.</p>
+                <div class="flex gap-4">
+                    <div class="w-10 h-10 glass flex items-center justify-center rounded-full"><i data-lucide="lock" class="w-4 h-4 text-primary"></i></div>
+                    <span class="text-[9px] uppercase tracking-widest font-black text-gray-500 flex items-center">SECURE ENCRYPTED PAYMENTS</span>
+                </div>
+            </div>
+            <div class="space-y-6">
+                <div class="glass p-6 group cursor-pointer hover:bg-white/5 transition-all">
+                    <div class="flex justify-between items-center">
+                        <span class="text-[10px] font-black uppercase tracking-widest">Can I switch plans later?</span>
+                        <i data-lucide="plus" class="w-4 h-4 text-primary"></i>
+                    </div>
+                </div>
+                <div class="glass p-6 group cursor-pointer hover:bg-white/5 transition-all">
+                    <div class="flex justify-between items-center">
+                        <span class="text-[10px] font-black uppercase tracking-widest">Is there a joining fee?</span>
+                        <i data-lucide="plus" class="w-4 h-4 text-primary"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark-lighter pt-32 pb-10 border-t border-white/5 mt-32">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-16 mb-20">
+                <div class="col-span-1 md:col-span-1">
+                    <a href="index.html" class="text-3xl font-heading font-black tracking-tighter flex items-center gap-2 mb-8">
+                        <span class="text-primary italic">SILVERMOON</span>
+                        <span class="font-light tracking-widest text-[10px] border-l border-white/20 pl-2 text-primary uppercase">Studio</span>
+                    </a>
+                    <p class="text-gray-500 max-sm mb-8 leading-relaxed text-[11px] font-medium uppercase tracking-wider">
+                        Redefining the standards of fitness in Surat. Owned by Maymuna Gandhi. Our mission is to forge a community of elite performers through science and luxury.
+                    </p>
+                    <div class="flex gap-5">
+                        <a href="#" class="w-11 h-11 glass flex items-center justify-center hover:bg-primary hover:text-dark transition-all rounded-full border border-white/10 hover:border-primary shadow-[0_0_15px_rgba(217,253,80,0.05)] hover:shadow-[0_0_25px_rgba(217,253,80,0.3)] group">
+                            <i data-lucide="instagram" class="w-4 h-4 group-hover:scale-110 transition-transform"></i>
+                        </a>
+                        <a href="#" class="w-11 h-11 glass flex items-center justify-center hover:bg-primary hover:text-dark transition-all rounded-full border border-white/10 hover:border-primary shadow-[0_0_15px_rgba(217,253,80,0.05)] hover:shadow-[0_0_25px_rgba(217,253,80,0.3)] group">
+                            <i data-lucide="youtube" class="w-4 h-4 group-hover:scale-110 transition-transform"></i>
+                        </a>
+                        <a href="#" class="w-11 h-11 glass flex items-center justify-center hover:bg-primary hover:text-dark transition-all rounded-full border border-white/10 hover:border-primary shadow-[0_0_15px_rgba(217,253,80,0.05)] hover:shadow-[0_0_25px_rgba(217,253,80,0.3)] group">
+                            <i data-lucide="twitter" class="w-4 h-4 group-hover:scale-110 transition-transform"></i>
+                        </a>
+                        <a href="#" class="w-11 h-11 glass flex items-center justify-center hover:bg-primary hover:text-dark transition-all rounded-full border border-white/10 hover:border-primary shadow-[0_0_15px_rgba(217,253,80,0.05)] hover:shadow-[0_0_25px_rgba(217,253,80,0.3)] group">
+                            <i data-lucide="message-circle" class="w-4 h-4 group-hover:scale-110 transition-transform"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h5 class="text-[10px] font-black mb-8 uppercase tracking-[0.4em] text-primary">User Navigation</h5>
+                    <ul class="space-y-4 text-gray-500 font-bold text-[10px] uppercase tracking-widest">
+                        <li><a href="about.html" class="hover:text-white transition-colors">The Brand</a></li>
+                        <li><a href="classes.html" class="hover:text-white transition-colors">Programs</a></li>
+                        <li><a href="trainers.html" class="hover:text-white transition-colors">Our Elite Team</a></li>
+                        <li><a href="membership.html" class="hover:text-white transition-colors">Memberships</a></li>
+                        <li><a href="schedule.html" class="hover:text-white transition-colors">Timetable</a></li>
+                        <li><a href="sitemap.html" class="hover:text-white transition-colors">Sitemap</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h5 class="text-[10px] font-black mb-8 uppercase tracking-[0.4em] text-primary">Staff & CRM</h5>
+                    <ul class="space-y-4 text-gray-500 font-bold text-[10px] uppercase tracking-widest">
+                        <li><a href="crm-login.html" class="hover:text-white transition-colors">Staff Portal</a></li>
+                        <li><a href="crm-dashboard.html" class="hover:text-white transition-colors">CRM Login</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors opacity-30 cursor-not-allowed">Admin Panel</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h5 class="text-[10px] font-black mb-8 uppercase tracking-[0.4em] text-primary">Connect</h5>
+                    <ul class="space-y-4 text-gray-500 font-bold text-[10px] uppercase tracking-widest">
+                        <li class="flex items-center gap-3"><i data-lucide="map-pin" class="w-4 h-4 text-primary"></i> Shahpore, Surat, Gujarat</li>
+                        <li class="flex items-center gap-3"><i data-lucide="phone" class="w-4 h-4 text-primary"></i> +91 (SURAT) SILVER</li>
+                        <li class="flex items-center gap-3"><i data-lucide="mail" class="w-4 h-4 text-primary"></i> hello@silvermoon.fit</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 text-[9px] uppercase tracking-[0.4em] text-gray-600">
+                <p>&copy; 2026 SilverMoon Fitness Studio. Owned by Maymuna Gandhi.</p>
+                <div class="flex gap-10">
+                    <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
+                    <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Icons
+        lucide.createIcons();
+
+        // Navbar Scroll
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                nav.classList.add('glass', 'py-4', 'border-b', 'border-white/5');
+                nav.classList.remove('py-6');
+            } else {
+                nav.classList.remove('glass', 'py-4', 'border-b', 'border-white/5');
+                nav.classList.add('py-6');
+            }
+        });
+
+        // Modal Handling
+        const modal = document.getElementById('paymentOverlay');
+        const checkoutForm = document.getElementById('checkoutForm');
+        const processingState = document.getElementById('processingState');
+
+        function openCheckout(name, price) {
+            document.getElementById('selectedPlanName').innerText = name;
+            document.getElementById('selectedPlanPrice').innerText = price;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeCheckout() {
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+            processingState.classList.add('hidden');
+            checkoutForm.classList.remove('hidden');
+        }
+
+        function processPayment() {
+            checkoutForm.classList.add('hidden');
+            processingState.classList.remove('hidden');
+            
+            // Simulated Redirection Delay
+            setTimeout(() => {
+                alert("Redirecting to Secure Bank Gateway (Razorpay/Stripe Interface)...");
+                window.location.href = "contact.html?status=pending";
+            }, 2500);
+        }
+
+        function scrollToPlans() {
+            document.getElementById('plans').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

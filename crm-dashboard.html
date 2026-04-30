@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SilverMoon CRM | Aesthetic Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { primary: '#D9FD50', dark: '#0A0A0A', 'dark-lighter': '#121212' },
+                    fontFamily: { heading: ['Orbitron', 'sans-serif'], body: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        body { background-color: #0A0A0A; color: #FFFFFF; font-family: 'Inter', sans-serif; }
+        h1 { font-family: 'Orbitron', sans-serif; font-weight: 900; text-transform: uppercase; letter-spacing: -0.05em; line-height: 0.9; }
+        h2 { font-family: 'Orbitron', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em; }
+        h3 { font-family: 'Orbitron', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+        .sidebar-link.active { color: #D9FD50; }
+        .view-section { display: none; }
+        .view-section.active { display: block; }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 100; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
+        .modal.active { display: flex; }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <!-- Add Member Modal -->
+    <div id="addModal" class="modal">
+        <div class="glass p-10 w-full max-w-md relative">
+            <button onclick="toggleModal()" class="absolute top-6 right-6 text-gray-500 hover:text-white"><i data-lucide="x"></i></button>
+            <h3 class="text-xl font-black uppercase mb-8 tracking-widest text-primary text-center">New Tribe Member</h3>
+            <form id="addMemberForm" class="space-y-6">
+                <div>
+                    <label class="block text-[10px] uppercase tracking-widest font-bold text-gray-500 mb-2">Member Name</label>
+                    <input type="text" id="mName" required class="w-full bg-white/5 border border-white/10 p-4 text-sm outline-none focus:border-primary/50 transition-all">
+                </div>
+                <div>
+                    <label class="block text-[10px] uppercase tracking-widest font-bold text-gray-500 mb-2">Plan Tier</label>
+                    <select id="mTier" class="w-full bg-dark border border-white/10 p-4 text-sm outline-none focus:border-primary/50 transition-all">
+                        <option value="Silver Core">Silver Core</option>
+                        <option value="Silver Pro">Silver Pro</option>
+                        <option value="Silver Elite">Silver Elite</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] uppercase tracking-widest font-bold text-gray-500 mb-2">Status</label>
+                    <select id="mStatus" class="w-full bg-dark border border-white/10 p-4 text-sm outline-none focus:border-primary/50 transition-all">
+                        <option value="Paid">Paid</option>
+                        <option value="Free">Free</option>
+                    </select>
+                </div>
+                <button type="submit" class="w-full py-4 bg-primary text-dark font-black uppercase tracking-widest text-[10px] hover:scale-[1.02] transition-all">Confirm Enlistment</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Top Nav -->
+    <nav class="py-6 px-10 glass flex justify-between items-center border-b border-white/5 relative z-50">
+        <a href="index.html" class="text-xl font-heading font-black tracking-tighter flex items-center gap-2 uppercase">
+            <span class="text-primary italic">SILVERMOON</span>
+            <span class="font-light tracking-widest text-[10px] border-l border-white/20 pl-2 text-primary uppercase">Studio</span>
+            <span class="font-light text-white ml-2 text-xs tracking-widest opacity-50">CRM</span>
+        </a>
+        <div class="flex items-center gap-10">
+            <div class="text-right hidden md:block">
+                <p class="text-[10px] font-black uppercase tracking-widest text-white">Maymuna Gandhi</p>
+                <p class="text-[8px] text-gray-500 uppercase font-bold">Proprietor</p>
+            </div>
+            <a href="crm-login.html" class="text-gray-500 hover:text-primary transition-colors"><i data-lucide="log-out" class="w-5 h-5"></i></a>
+        </div>
+    </nav>
+
+    <div class="flex flex-1">
+        <!-- Sidebar -->
+        <aside class="w-64 glass border-r border-white/5 hidden lg:block p-8">
+            <ul class="space-y-8 mb-32" id="sidebarLinks">
+                <li><button onclick="switchView('dashboard')" class="sidebar-link active flex items-center gap-4 font-bold text-[10px] uppercase tracking-widest" data-view="dashboard"><i data-lucide="layout-grid" class="w-4 h-4"></i> Dashboard</button></li>
+                <li><button onclick="switchView('members')" class="sidebar-link flex items-center gap-4 text-gray-500 hover:text-white transition-colors font-bold text-[10px] uppercase tracking-widest" data-view="members"><i data-lucide="users" class="w-4 h-4"></i> Members</button></li>
+                <li><button onclick="switchView('payments')" class="sidebar-link flex items-center gap-4 text-gray-500 hover:text-white transition-colors font-bold text-[10px] uppercase tracking-widest" data-view="payments"><i data-lucide="credit-card" class="w-4 h-4"></i> Payments</button></li>
+                <li><button onclick="switchView('settings')" class="sidebar-link flex items-center gap-4 text-gray-500 hover:text-white transition-colors font-bold text-[10px] uppercase tracking-widest" data-view="settings"><i data-lucide="settings" class="w-4 h-4"></i> Settings</button></li>
+            </ul>
+
+            <!-- Sidebar Socials -->
+            <div class="flex flex-wrap gap-4 pt-10 border-t border-white/5 opacity-50 hover:opacity-100 transition-opacity">
+                <a href="#" class="w-10 h-10 glass flex items-center justify-center hover:bg-primary hover:text-dark transition-all rounded-full border border-white/5 hover:border-primary shadow-lg group">
+                    <i data-lucide="instagram" class="w-4 h-4 group-hover:scale-110 transition-transform"></i>
+                </a>
+                <a href="#" class="w-10 h-10 glass flex items-center justify-center hover:bg-primary hover:text-dark transition-all rounded-full border border-white/5 hover:border-primary shadow-lg group">
+                    <i data-lucide="youtube" class="w-4 h-4 group-hover:scale-110 transition-transform"></i>
+                </a>
+                <a href="#" class="w-10 h-10 glass flex items-center justify-center hover:bg-primary hover:text-dark transition-all rounded-full border border-white/5 hover:border-primary shadow-lg group">
+                    <i data-lucide="twitter" class="w-4 h-4 group-hover:scale-110 transition-transform"></i>
+                </a>
+                <a href="#" class="w-10 h-10 glass flex items-center justify-center hover:bg-primary hover:text-dark transition-all rounded-full border border-white/5 hover:border-primary shadow-lg group">
+                    <i data-lucide="message-circle" class="w-4 h-4 group-hover:scale-110 transition-transform"></i>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-10">
+            
+            <!-- Dashboard View -->
+            <div id="dashboardView" class="view-section active">
+                <div class="flex justify-between items-center mb-12">
+                    <h2 class="text-3xl font-black uppercase tracking-tighter text-white">Overview</h2>
+                    <div class="flex gap-4">
+                        <button onclick="exportCSV()" class="px-5 py-3 glass text-[10px] font-black uppercase tracking-widest hover:bg-white/5 transition-all">Export CSV</button>
+                        <button onclick="toggleModal()" class="px-5 py-3 bg-primary text-dark text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-transform shadow-lg">+ Add New</button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+                    <div class="glass p-8 border-l-4 border-primary">
+                        <p class="text-[10px] uppercase tracking-widest text-gray-500 mb-2 font-bold">Total Tribe</p>
+                        <h3 class="text-4xl font-black" id="totalMembers">0</h3>
+                        <p class="text-[10px] text-primary mt-2 font-bold uppercase tracking-widest">Active Database</p>
+                    </div>
+                    <div class="glass p-8 border-l-4 border-gray-600">
+                        <p class="text-[10px] uppercase tracking-widest text-gray-500 mb-2 font-bold">Paid Tiers</p>
+                        <h3 class="text-4xl font-black" id="paidMembers">0</h3>
+                        <p class="text-[10px] text-gray-500 mt-2 font-bold uppercase tracking-widest">Revenue Streams</p>
+                    </div>
+                    <div class="glass p-8 border-l-4 border-primary/40">
+                        <p class="text-[10px] uppercase tracking-widest text-gray-500 mb-2 font-bold">Growth Rate</p>
+                        <h3 class="text-4xl font-black">94%</h3>
+                        <p class="text-[10px] text-primary mt-2 font-bold uppercase tracking-widest">Surat Market Reach</p>
+                    </div>
+                </div>
+
+                <div class="glass overflow-hidden">
+                    <div class="p-6 border-b border-white/5 bg-white/5">
+                        <h4 class="text-xs font-black uppercase tracking-widest">Recent Enlistments</h4>
+                    </div>
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="text-[10px] uppercase tracking-widest text-gray-600 border-b border-white/5 font-bold">
+                                <th class="p-6">Member</th>
+                                <th class="p-6">Tier</th>
+                                <th class="p-6">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentTableBody" class="text-sm">
+                            <!-- Dynamic Content -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Members View -->
+            <div id="membersView" class="view-section">
+                <div class="flex justify-between items-center mb-12">
+                    <h2 class="text-3xl font-black uppercase tracking-tighter text-white">Full Tribe List</h2>
+                    <button onclick="toggleModal()" class="px-5 py-3 bg-primary text-dark text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-transform shadow-lg">+ Add Member</button>
+                </div>
+                <div class="glass overflow-hidden">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="text-[10px] uppercase tracking-widest text-gray-600 border-b border-white/5 font-bold">
+                                <th class="p-6">Name</th>
+                                <th class="p-6">Plan Tier</th>
+                                <th class="p-6">Status</th>
+                                <th class="p-6">Join Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="fullTableBody" class="text-sm">
+                            <!-- Dynamic Content -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Payments View -->
+            <div id="paymentsView" class="view-section text-center py-40 glass">
+                <i data-lucide="lock" class="w-12 h-12 text-primary mx-auto mb-6 opacity-30"></i>
+                <h3 class="text-2xl font-black uppercase tracking-widest text-white">Revenue Portal</h3>
+                <p class="text-gray-600 mt-4 uppercase tracking-widest text-[10px] font-bold">Payment integration locked in local mode.</p>
+            </div>
+
+            <!-- Settings View -->
+            <div id="settingsView" class="view-section max-w-2xl">
+                <h3 class="text-2xl font-black uppercase mb-10 tracking-widest text-white">Studio Config</h3>
+                <div class="space-y-8">
+                    <div class="glass p-8">
+                        <h4 class="text-[10px] font-bold uppercase tracking-widest text-primary mb-4 italic">General</h4>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-[9px] uppercase tracking-widest text-gray-500 mb-2">Owner Name</label>
+                                <input type="text" value="Maymuna Gandhi" disabled class="w-full bg-dark border border-white/5 p-4 text-xs font-bold text-white">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="glass p-8 border-red-500/20">
+                        <h4 class="text-[10px] font-bold uppercase tracking-widest text-red-500 mb-4 italic">Data Management</h4>
+                        <button onclick="clearData()" class="px-6 py-3 border border-red-500/20 text-red-500 text-[9px] font-black uppercase tracking-widest hover:bg-red-500/10 transition-all italic">Purge Local Database</button>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // Database Simulation (LocalStorage)
+        let members = JSON.parse(localStorage.getItem('silvermoon_members')) || [
+            { name: "Karan Varma", tier: "Silver Elite", status: "Paid", date: "Apr 28, 2026" },
+            { name: "Ananya Shah", tier: "Silver Pro", status: "Paid", date: "Apr 29, 2026" }
+        ];
+
+        function saveData() {
+            localStorage.setItem('silvermoon_members', JSON.stringify(members));
+            renderDashboard();
+            renderMembers();
+        }
+
+        // View Switching
+        function switchView(viewId) {
+            document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+            document.getElementById(viewId + 'View').classList.add('active');
+            
+            document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active', 'text-primary'));
+            document.querySelectorAll('.sidebar-link').forEach(l => {
+                if (l.dataset.view === viewId) {
+                    l.classList.add('active', 'text-primary');
+                } else {
+                    l.classList.add('text-gray-500');
+                }
+            });
+        }
+
+        // Modal Logic
+        function toggleModal() {
+            document.getElementById('addModal').classList.toggle('active');
+        }
+
+        // Add Member
+        document.getElementById('addMemberForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const newMember = {
+                name: document.getElementById('mName').value,
+                tier: document.getElementById('mTier').value,
+                status: document.getElementById('mStatus').value,
+                date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+            };
+            members.unshift(newMember);
+            saveData();
+            toggleModal();
+            document.getElementById('addMemberForm').reset();
+        });
+
+        // Rendering
+        function renderDashboard() {
+            const table = document.getElementById('recentTableBody');
+            table.innerHTML = members.slice(0, 5).map(m => `
+                <tr class="border-b border-white/5">
+                    <td class="p-6 font-bold text-white uppercase tracking-tight">${m.name}</td>
+                    <td class="p-6 text-gray-500 uppercase text-[10px] font-bold">${m.tier}</td>
+                    <td class="p-6"><span class="px-3 py-1 ${m.status === 'Paid' ? 'bg-primary/10 text-primary' : 'bg-white/10 text-gray-500'} text-[9px] font-black uppercase">${m.status}</span></td>
+                </tr>
+            `).join('');
+
+            document.getElementById('totalMembers').innerText = members.length;
+            document.getElementById('paidMembers').innerText = members.filter(m => m.status === 'Paid').length;
+        }
+
+        function renderMembers() {
+            const table = document.getElementById('fullTableBody');
+            table.innerHTML = members.map(m => `
+                <tr class="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                    <td class="p-6 font-bold text-white uppercase tracking-tight">${m.name}</td>
+                    <td class="p-6 text-gray-500 uppercase text-[10px] font-bold">${m.tier}</td>
+                    <td class="p-6"><span class="px-3 py-1 ${m.status === 'Paid' ? 'bg-primary/10 text-primary' : 'bg-white/10 text-gray-500'} text-[9px] font-black uppercase">${m.status}</span></td>
+                    <td class="p-6 text-gray-600 font-bold uppercase text-[10px]">${m.date}</td>
+                </tr>
+            `).join('');
+        }
+
+        // CSV Export
+        function exportCSV() {
+            let csv = 'Name,Tier,Status,Join Date\n';
+            members.forEach(m => {
+                csv += `${m.name},${m.tier},${m.status},${m.date}\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.setAttribute('href', url);
+            a.setAttribute('download', 'silvermoon_members.csv');
+            a.click();
+        }
+
+        function clearData() {
+            if(confirm('Are you sure you want to purge all data? This cannot be undone.')) {
+                localStorage.removeItem('silvermoon_members');
+                location.reload();
+            }
+        }
+
+        // Init
+        renderDashboard();
+        renderMembers();
+        lucide.createIcons();
+    </script>
+</body>
+</html>
